@@ -80,6 +80,30 @@ class _MyHomePageState extends State<MyHomePage> {
             })
       ],
     );
+    var bottomNavigationBar2 = BottomNavigationBar(
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.menu_book),
+          label: 'Recipes',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.kitchen),
+          label: 'Pantry',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_basket),
+          label: 'Groceries',
+        ),
+      ],
+      currentIndex: _selectedIndex,
+      selectedItemColor: Colors.green,
+      unselectedItemColor: Colors.grey,
+      onTap: _onItemTapped,
+    );
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -89,6 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: const Center(
       ),
+      bottomNavigationBar: bottomNavigationBar2,
     );
   }
 }
