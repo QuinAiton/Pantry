@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());
@@ -6,13 +8,13 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    var creamColor = Color.fromARGB(248, 245, 239, 227);
+    var creamColor = const Color.fromARGB(248, 245, 239, 227);
     return MaterialApp(
       title: 'Pantry App',
       theme: ThemeData(
         scaffoldBackgroundColor: creamColor,
         primarySwatch: Colors.green,
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
           iconTheme: IconThemeData(color: Colors.black),
           foregroundColor: Colors.black, //<-- SEE HERE
         ),
@@ -36,6 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _selectedIndex = index;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     var listView = ListView(
@@ -99,17 +102,17 @@ class _MyHomePageState extends State<MyHomePage> {
       unselectedItemColor: Colors.grey,
       onTap: _onItemTapped,
     );
-    var creamColor = Color.fromARGB(248, 245, 239, 227);
+    var creamColor = const Color.fromARGB(248, 245, 239, 227);
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
         title: Text(
           widget.title,
-          style: TextStyle(color: Colors.black),
+          style: const TextStyle(color: Colors.black),
         ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.search),
+            icon: const Icon(Icons.search),
             onPressed: () {},
           ),
         ],
@@ -119,12 +122,119 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: creamColor,
         child: listView,
       ),
-      
-      body: const Center(
+      body: Container(
+        color: creamColor,
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        child: ListView(
+            children: [
+          const OneColumnWidget(
+              title: 'Pantry', image: 'assets/images/pantry.png'),
+          TwoColumnWidget(items: [
+            {
+              title: 'Recipies',
+              image: 'assets/images/recipes.png',
+            }
+          ]),
+          const OneColumnWidget(
+            title: 'Groceries',
+            image: 'assets/images/groceries.png',
+          ),
+          TwoColumnWidget(items: [
+            {
+              title: 'Recipies',
+              image: 'assets/images/recipes.png',
+            }
+          ]),
+        ]
+                .map((widget) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: widget,
+                    ))
+                .toList()),
       ),
       bottomNavigationBar: bottomNavigationBarView,
     );
   }
 }
 
+class OneColumnWidget extends StatelessWidget {
+  final String title;
+  final String image;
 
+  const OneColumnWidget({
+    required this.image,
+    required this.title,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Colors.amber,
+      ),
+      height: 200,
+      child: Center(
+          child: Column(
+        children: [
+          Image(
+            image: AssetImage(image),
+          ),
+          Text(title),
+        ],
+      )),
+    );
+  }
+}
+
+class TwoColumnWidget extends StatelessWidget {
+  final List<String, dynamic> items;
+  const TwoColumnWidget({
+    required this.items,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        itemBuilder: ((context, index) => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.blue,
+                    ),
+                    height: 150,
+                    width: 180,
+                    child: Center(
+                      child: Text(items[index]['title']),
+                    )),
+                Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.red,
+                    ),
+                    height: 150,
+                    width: 180,
+                    child: Center(
+                      child: Image(
+                        image: AssetImage(items[index]['image']),
+                      ),
+                    )),
+              ],
+            )),
+        itemCount: 4);
+  }
+}
+
+      // body: ListView.builder(
+      //     itemBuilder: ((context, index) => Container(
+      //           padding: const EdgeInsets.symmetric(vertical: 10),
+      //           child: Container(
+      //             height: 400,
+      //             color: Colors.white,
+      //             child: Center(child: Text('Item $index')),
+      //           ),
+      //         )),
