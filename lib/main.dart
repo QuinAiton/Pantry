@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp();
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({required this.title});
+  const MyHomePage({super.key, required this.title});
   final String title;
 
   @override
@@ -114,10 +114,10 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        title: Text(
-          widget.title,
-          style: const TextStyle(color: Colors.black),
-        ),
+        // title: Text(
+        //   widget.title,
+        //   style: const TextStyle(color: Colors.black),
+        // ),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.search),
@@ -137,11 +137,11 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             child: Column(
               children: [
-                const OneColumnWidget(
-                  title: 'Pantry',
-                  image: 'assets/images/pantry.png',
-                ),
-                const TwoColumnWidget(items: [
+                const TiledButton(
+                    image: 'assets/tomatoes_whitedrop.jpg',
+                    text: 'Unlock Premium and tailored recipes',
+                    buttonText: 'Join For Free'),
+                const TwoColumnWidget(title: 'New Recipes', items: [
                   {
                     'title': 'Recipes',
                     'image': 'assets/images/recipes.png',
@@ -152,10 +152,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   }
                 ]),
                 const OneColumnWidget(
-                  title: 'Groceries',
-                  image: 'assets/images/groceries.png',
+                  title: 'Recipe Of The Day',
+                  body: 'Place holder text',
+                  image: 'assets/tomatoes_whitedrop.jpg',
                 ),
-                const TwoColumnWidget(items: [
+                const TwoColumnWidget(title: 'Weekly Recipes', items: [
                   {
                     'title': 'Recipes',
                     'image': 'assets/images/recipes.png',
@@ -180,13 +181,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class OneColumnWidget extends StatelessWidget {
-  final String title;
+class TiledButton extends StatelessWidget {
+  final String text;
   final String image;
+  final String buttonText;
 
-  const OneColumnWidget({
+  const TiledButton({
     required this.image,
-    required this.title,
+    required this.buttonText,
+    required this.text,
     Key? key,
   }) : super(key: key);
 
@@ -195,58 +198,132 @@ class OneColumnWidget extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: Colors.amber,
+        image: DecorationImage(
+            image: AssetImage(image),
+            fit: BoxFit.cover,
+            colorFilter: const ColorFilter.srgbToLinearGamma()),
       ),
-      height: 200,
-      child: Center(
-        child: Column(
-          children: [
-            Image(
-              image: AssetImage(image),
-            ),
-            Text(title),
-          ],
+      height: 150,
+      width: 400,
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text(
+          text.toUpperCase(),
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+          ),
         ),
-      ),
+        const SizedBox(height: 10),
+        TextButton(
+            onPressed: null,
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.red[400]),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              child: Text(
+                buttonText,
+                style: const TextStyle(color: Colors.white),
+              ),
+            ))
+      ]),
     );
   }
 }
 
-class TwoColumnWidget extends StatelessWidget {
-  final List<Map<String, dynamic>> items;
-  const TwoColumnWidget({
-    required this.items,
+class OneColumnWidget extends StatelessWidget {
+  final String title;
+  final String image;
+  final String body;
+
+  const OneColumnWidget({
+    required this.image,
+    required this.body,
+    required this.title,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
-      crossAxisSpacing: 10,
-      shrinkWrap: true,
-      physics:
-          NeverScrollableScrollPhysics(), // Disable scrolling inside GridView
-      children: items.map((item) {
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: Colors.blue,
-          ),
-          height: 150,
-          width: 180,
-          child: Center(
-            child: Column(
-              children: [
-                Text(item['title']),
-                Image(image: AssetImage(item['image'])),
-              ],
+    return Column(
+      children: [
+        Text(
+          title,
+          style: const TextStyle(fontSize: 20),
+        ),
+        Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
             ),
-          ),
-        );
-      }).toList(),
+            height: 300,
+            width: 400,
+            child: Column(children: [
+              Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage(image),
+                      fit: BoxFit.cover,
+                      colorFilter: const ColorFilter.srgbToLinearGamma()),
+                ),
+                height: 200,
+                width: 400,
+              ),
+              Container(
+                  padding: const EdgeInsets.all(10),
+                  child: Text(
+                    body,
+                  ))
+            ])),
+      ],
     );
   }
 }
 
+class TwoColumnWidget extends StatelessWidget {
+  final String title;
+  final List<Map<String, dynamic>> items;
+  const TwoColumnWidget({
+    required this.items,
+    required this.title,
+    Key? key,
+  }) : super(key: key);
 
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          title,
+          style: const TextStyle(fontSize: 20),
+        ),
+        GridView.count(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          shrinkWrap: true,
+          physics:
+              const NeverScrollableScrollPhysics(), // Disable scrolling inside GridView
+          children: items.map((item) {
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.blue,
+              ),
+              height: 150,
+              width: 180,
+              child: Center(
+                child: Column(
+                  children: [
+                    Text(item['title']),
+                    Image(image: AssetImage(item['image'])),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+}
