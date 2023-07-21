@@ -145,6 +145,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   {
                     'title': 'Recipes',
                     'image': 'assets/images/recipes.png',
+                  },
+                  {
+                    'title': 'Recipes',
+                    'image': 'assets/images/recipes.png',
                   }
                 ]),
                 const OneColumnWidget(
@@ -152,6 +156,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   image: 'assets/images/groceries.png',
                 ),
                 const TwoColumnWidget(items: [
+                  {
+                    'title': 'Recipes',
+                    'image': 'assets/images/recipes.png',
+                  },
                   {
                     'title': 'Recipes',
                     'image': 'assets/images/recipes.png',
@@ -213,38 +221,32 @@ class TwoColumnWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return GridView.count(
+      crossAxisCount: 2,
+      crossAxisSpacing: 10,
       shrinkWrap: true,
-      itemBuilder: (context, index) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.blue,
-            ),
-            height: 150,
-            width: 180,
-            child: Center(
-              child: Text(items[index]['title']),
+      physics:
+          NeverScrollableScrollPhysics(), // Disable scrolling inside GridView
+      children: items.map((item) {
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.blue,
+          ),
+          height: 150,
+          width: 180,
+          child: Center(
+            child: Column(
+              children: [
+                Text(item['title']),
+                Image(image: AssetImage(item['image'])),
+              ],
             ),
           ),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.red,
-            ),
-            height: 150,
-            width: 180,
-            child: Center(
-              child: Image(
-                image: AssetImage(items[index]['image']),
-              ),
-            ),
-          ),
-        ],
-      ),
-      itemCount: items.length,
+        );
+      }).toList(),
     );
   }
 }
+
+
