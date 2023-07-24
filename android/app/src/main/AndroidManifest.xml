@@ -21,6 +21,8 @@
               android:resource="@style/NormalTheme"
               />
             <intent-filter>
+            <!-- Required to fetch data from the internet. -->
+<uses-permission android:name="android.permission.INTERNET" />
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
