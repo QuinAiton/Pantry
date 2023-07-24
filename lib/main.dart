@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'requests/getRecipes.dart';
+import 'entities/Recipe.dart';
 
 void main() => runApp(const MyApp());
 
@@ -34,7 +35,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
-  late Future<dynamic> futureRecipe;
+  late Future<List<Recipe>?> futureRecipe;
 
   @override
   void initState() {
@@ -138,31 +139,37 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: ListView(
         children: [
-          FutureBuilder<dynamic>(
+          FutureBuilder<List<Recipe>?>(
             future: futureRecipe,
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                // While the data is still loading
+                return CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                // If there's an error, display the error message
+                return Text('Error: ${snapshot.error}');
+              } else if (snapshot.hasData) {
                 // Wrap the ListView.builder with a Container to give it a size.
                 return Container(
                   height:
                       300, // Replace this with the desired height of the list
                   child: ListView.builder(
-                    itemCount: snapshot.data.length,
+                    itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
                       // Return a Text widget for each recipe title
-                      return Text(snapshot.data[index].title);
+                      return TwoColumnWidget(
+                        items: snapshot.data!,
+                        title: 'Recipes',
+                      );
                     },
                   ),
                 );
-              } else if (snapshot.hasError) {
-                // If there's an error, display the error message
-                return Text('${snapshot.error}');
+              } else {
+                // If there's no data and no error, show a message that there are no recipes.
+                return Text('No recipes found.');
               }
-
-              // By default, show a loading spinner.
-              return const CircularProgressIndicator();
             },
-          ),
+),
 
           Container(
             color: creamColor,
@@ -173,31 +180,31 @@ class _MyHomePageState extends State<MyHomePage> {
                     image: 'assets/tomatoes_whitedrop.jpg',
                     text: 'Unlock Premium and tailored recipes',
                     buttonText: 'Join For Free'),
-                const TwoColumnWidget(title: 'New Recipes', items: [
-                  {
-                    'title': 'Recipes',
-                    'image': 'assets/images/recipes.png',
-                  },
-                  {
-                    'title': 'Recipes',
-                    'image': 'assets/images/recipes.png',
-                  }
-                ]),
+                // const TwoColumnWidget(title: 'New Recipes', items: [
+                //   {
+                //     'title': 'Recipes',
+                //     'image': 'assets/images/recipes.png',
+                //   },
+                //   {
+                //     'title': 'Recipes',
+                //     'image': 'assets/images/recipes.png',
+                //   }
+                // ]),
                 const OneColumnWidget(
                   title: 'Recipe Of The Day',
                   body: 'Place holder text',
                   image: 'assets/tomatoes_whitedrop.jpg',
                 ),
-                const TwoColumnWidget(title: 'Weekly Recipes', items: [
-                  {
-                    'title': 'Recipes',
-                    'image': 'assets/images/recipes.png',
-                  },
-                  {
-                    'title': 'Recipes',
-                    'image': 'assets/images/recipes.png',
-                  }
-                ]),
+                // const TwoColumnWidget(title: 'Weekly Recipes', items: [
+                //   {
+                //     'title': 'Recipes',
+                //     'image': 'assets/images/recipes.png',
+                //   },
+                //   {
+                //     'title': 'Recipes',
+                //     'image': 'assets/images/recipes.png',
+                //   }
+                // ]),
               ]
                   .map((widget) => Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -231,7 +238,7 @@ class TiledButton extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         image: DecorationImage(
-            image: AssetImage(image),
+            image: Image.network(image),
             fit: BoxFit.cover,
             colorFilter: const ColorFilter.srgbToLinearGamma()),
       ),
@@ -315,7 +322,8 @@ class OneColumnWidget extends StatelessWidget {
 
 class TwoColumnWidget extends StatelessWidget {
   final String title;
-  final List<Map<String, dynamic>> items;
+  final List<Recipe> items;
+
   const TwoColumnWidget({
     required this.items,
     required this.title,
@@ -334,9 +342,8 @@ class TwoColumnWidget extends StatelessWidget {
           crossAxisCount: 2,
           crossAxisSpacing: 10,
           shrinkWrap: true,
-          physics:
-              const NeverScrollableScrollPhysics(), // Disable scrolling inside GridView
-          children: items.map((item) {
+          physics: const NeverScrollableScrollPhysics(),
+          children: items.map((recipe) {
             return Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
@@ -347,8 +354,12 @@ class TwoColumnWidget extends StatelessWidget {
               child: Center(
                 child: Column(
                   children: [
-                    Text(item['title']),
-                    Image(image: AssetImage(item['image'])),
+                    Text(recipe.title),
+                    Image.asset(
+                      recipe
+                          .image, // Load the image from assets using Image.asset
+                      fit: BoxFit.cover, // Adjust the fit as needed
+                    ),
                   ],
                 ),
               ),
