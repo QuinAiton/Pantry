@@ -13,7 +13,6 @@ Future<dynamic> fetchRecipes() async {
     var decodedResponse = jsonDecode(response.body);
     var results = decodedResponse['results'];
     var recipeList = results.map((recipe) => Recipe.fromJson(recipe)).toList();
-    print(recipeList);
     return recipeList;
   } else {
     // If the server did not return a 200 OK response,
