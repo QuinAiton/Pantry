@@ -138,39 +138,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: listView,
       ),
       body: ListView(
+        scrollDirection: Axis.vertical,
         children: [
-          FutureBuilder<List<Recipe>?>(
-            future: futureRecipe,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                // While the data is still loading
-                return CircularProgressIndicator();
-              } else if (snapshot.hasError) {
-                // If there's an error, display the error message
-                return Text('Error: ${snapshot.error}');
-              } else if (snapshot.hasData) {
-                // Wrap the ListView.builder with a Container to give it a size.
-                return Container(
-                  height:
-                      300, // Replace this with the desired height of the list
-                  child: ListView.builder(
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      // Return a Text widget for each recipe title
-                      return TwoColumnWidget(
-                        items: snapshot.data!,
-                        title: 'Recipes',
-                      );
-                    },
-                  ),
-                );
-              } else {
-                // If there's no data and no error, show a message that there are no recipes.
-                return Text('No recipes found.');
-              }
-            },
-),
-
           Container(
             color: creamColor,
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -180,32 +149,43 @@ class _MyHomePageState extends State<MyHomePage> {
                     image: 'assets/tomatoes_whitedrop.jpg',
                     text: 'Unlock Premium and tailored recipes',
                     buttonText: 'Join For Free'),
-                // const TwoColumnWidget(title: 'New Recipes', items: [
-                //   {
-                //     'title': 'Recipes',
-                //     'image': 'assets/images/recipes.png',
-                //   },
-                //   {
-                //     'title': 'Recipes',
-                //     'image': 'assets/images/recipes.png',
-                //   }
-                // ]),
+                FutureBuilder<List<Recipe>?>(
+                  future: futureRecipe,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      // While the data is still loading
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      // If there's an error, display the error message
+                      return Text('Error: ${snapshot.error}');
+                    } else if (snapshot.hasData) {
+                      // Wrap the ListView.builder with a Container to give it a size.
+                      return SizedBox(
+                        height:
+                            300, // Replace this with the desired height of the list
+                        child: ListView.builder(
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            // Return a Text widget for each recipe title
+                            return TwoColumnWidget(
+                              items: snapshot.data!,
+                              title: 'Recipes',
+                            );
+                          },
+                        ),
+                      );
+                    } else {
+                      // If there's no data and no error, show a message that there are no recipes.
+                      return const Text('No recipes found.');
+                    }
+                  },
+                ),
                 const OneColumnWidget(
                   title: 'Recipe Of The Day',
                   body: 'Place holder text',
                   image: 'assets/tomatoes_whitedrop.jpg',
                 ),
-                // const TwoColumnWidget(title: 'Weekly Recipes', items: [
-                //   {
-                //     'title': 'Recipes',
-                //     'image': 'assets/images/recipes.png',
-                //   },
-                //   {
-                //     'title': 'Recipes',
-                //     'image': 'assets/images/recipes.png',
-                //   }
-                // ]),
-              ]
+              ] 
                   .map((widget) => Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: widget,
@@ -238,10 +218,13 @@ class TiledButton extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         image: DecorationImage(
-            image: Image.network(image),
-            fit: BoxFit.cover,
-            colorFilter: const ColorFilter.srgbToLinearGamma()),
+          image: AssetImage(
+              image), // Use AssetImage to create an ImageProvider from the asset
+          fit: BoxFit.cover,
+          colorFilter: const ColorFilter.srgbToLinearGamma(),
+        ),
       ),
+
       height: 150,
       width: 400,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -338,16 +321,17 @@ class TwoColumnWidget extends StatelessWidget {
           title,
           style: const TextStyle(fontSize: 20),
         ),
-        GridView.count(
-          crossAxisCount: 2,
-          crossAxisSpacing: 10,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: items.map((recipe) {
             return Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 color: Colors.blue,
+                image: DecorationImage(
+                  image: NetworkImage(recipe.image),
+                  fit: BoxFit.cover,
+                ),
               ),
               height: 150,
               width: 180,
@@ -355,11 +339,6 @@ class TwoColumnWidget extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(recipe.title),
-                    Image.asset(
-                      recipe
-                          .image, // Load the image from assets using Image.asset
-                      fit: BoxFit.cover, // Adjust the fit as needed
-                    ),
                   ],
                 ),
               ),
