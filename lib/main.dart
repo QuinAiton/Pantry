@@ -121,10 +121,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        // title: Text(
-        //   widget.title,
-        //   style: const TextStyle(color: Colors.black),
-        // ),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.search),
@@ -160,19 +156,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       return Text('Error: ${snapshot.error}');
                     } else if (snapshot.hasData) {
                       // Wrap the ListView.builder with a Container to give it a size.
-                      return SizedBox(
-                        height:
-                            300, // Replace this with the desired height of the list
-                        child: ListView.builder(
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            // Return a Text widget for each recipe title
-                            return TwoColumnWidget(
-                              items: snapshot.data!,
-                              title: 'Recipes',
-                            );
-                          },
-                        ),
+                      return RecipeRowHorizontal(
+                        recipes: [...snapshot.data!],
                       );
                     } else {
                       // If there's no data and no error, show a message that there are no recipes.
@@ -185,7 +170,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   body: 'Place holder text',
                   image: 'assets/tomatoes_whitedrop.jpg',
                 ),
-              ] 
+              ]
                   .map((widget) => Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: widget,
@@ -196,6 +181,41 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       bottomNavigationBar: bottomNavigationBarView,
+    );
+  }
+}
+
+class RecipeRowHorizontal extends StatelessWidget {
+  final List<Recipe> recipes;
+  const RecipeRowHorizontal({super.key, required this.recipes});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 300, // Replace this with the desired height of the list
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              child: Text(
+                'New Recipes',
+                style: TextStyle(fontSize: 20),
+              )),
+          Flexible(
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: recipes!.length,
+              itemBuilder: (context, index) {
+                return RecipeItem(
+                  items: recipes!,
+                  title: 'Recipes',
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -224,7 +244,6 @@ class TiledButton extends StatelessWidget {
           colorFilter: const ColorFilter.srgbToLinearGamma(),
         ),
       ),
-
       height: 150,
       width: 400,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -269,10 +288,14 @@ class OneColumnWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 20),
+        const Padding(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: Text(
+              'Recipe Of The Day',
+              style: TextStyle(fontSize: 20),
+            )
         ),
         Container(
             decoration: BoxDecoration(
@@ -303,11 +326,11 @@ class OneColumnWidget extends StatelessWidget {
   }
 }
 
-class TwoColumnWidget extends StatelessWidget {
+class RecipeItem extends StatelessWidget {
   final String title;
   final List<Recipe> items;
 
-  const TwoColumnWidget({
+  const RecipeItem({
     required this.items,
     required this.title,
     Key? key,
@@ -315,16 +338,14 @@ class TwoColumnWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 20),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: items.map((recipe) {
-            return Container(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: items.map((recipe) {
+        return Padding(
+            padding: EdgeInsets.only(right: 20),
+            child: Column(
+              children: [
+                Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 color: Colors.blue,
@@ -334,18 +355,21 @@ class TwoColumnWidget extends StatelessWidget {
                 ),
               ),
               height: 150,
-              width: 180,
-              child: Center(
-                child: Column(
-                  children: [
-                    Text(recipe.title),
-                  ],
+                  width: 180,
                 ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  child: SizedBox(
+                      width: 1 / 3 * MediaQuery.of(context).size.width,
+                      child: Text(
+                        recipe.title,
+                        textAlign: TextAlign.start,
+                      )),
+                )
+              ],
+            ));
+      }).toList(),
     );
   }
 }
