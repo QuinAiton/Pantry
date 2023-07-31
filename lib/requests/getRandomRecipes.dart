@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:pantry/entities/Recipe.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-Future<List<Recipe>?> fetchRecipes() async {
+Future<List<Recipe>?> fetchRandomRecipes() async {
   var id = dotenv.env['edamam_app_id'];
   var key = dotenv.env['edamam_app_key'];
   var query =

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'requests/getRecipes.dart';
+import 'requests/getRandomRecipes.dart';
 import 'entities/Recipe.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:math';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -40,11 +41,10 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
   late Future<List<Recipe>?> futureRecipe;
-
   @override
   void initState() {
     super.initState();
-    futureRecipe = fetchRecipes();
+    futureRecipe = fetchRandomRecipes();
   }
 
   void _onItemTapped(int index) {
@@ -169,10 +169,29 @@ class _MyHomePageState extends State<MyHomePage> {
                     }
                   },
                 ),
-                const OneColumnWidget(
-                  title: 'Recipe Of The Day',
-                  body: 'Place holder text',
-                  image: 'assets/tomatoes_whitedrop.jpg',
+                FutureBuilder<List<Recipe>?>(
+                  future: futureRecipe,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      // While the data is still loading
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      // If there's an error, display the error message
+                      return Text('Error: ${snapshot.error}');
+                    } else if (snapshot.hasData) {
+                      // Wrap the ListView.builder with a Cont
+                      //ainer to give it a size.
+                      // var random = Random().nextInt(snapshot.data!.length);
+                      return OneColumnWidget(
+                        title: 'Recipe Of The Day',
+                        body: snapshot.data![19].title,
+                        image: snapshot.data![19].image,
+                      );
+                    } else {
+                      // If there's no data and no error, show a message that there are no recipes.
+                      return const Text('No recipes found.');
+                    }
+                  },
                 ),
               ]
                   .map((widget) => Padding(
@@ -196,7 +215,7 @@ class RecipeRowHorizontal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 300, // Replace this with the desired height of the list
+      height: 220,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -204,15 +223,15 @@ class RecipeRowHorizontal extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 10),
               child: Text(
                 'New Recipes',
-                style: TextStyle(fontSize: 20),   
+                style: TextStyle(fontSize: 20),
               )),
           Flexible(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: recipes!.length,
+              itemCount: recipes.length,
               itemBuilder: (context, index) {
                 return RecipeItem(
-                  items: recipes!,
+                  items: recipes,
                   title: 'Recipes',
                 );
               },
@@ -299,8 +318,7 @@ class OneColumnWidget extends StatelessWidget {
             child: Text(
               'Recipe Of The Day',
               style: TextStyle(fontSize: 20),
-            )
-        ),
+            )),
         Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
@@ -311,10 +329,14 @@ class OneColumnWidget extends StatelessWidget {
             child: Column(children: [
               Container(
                 decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20)),
+                  color: Colors.blue,
                   image: DecorationImage(
-                      image: AssetImage(image),
-                      fit: BoxFit.cover,
-                      colorFilter: const ColorFilter.srgbToLinearGamma()),
+                    image: NetworkImage(image),
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 height: 200,
                 width: 400,
@@ -350,14 +372,14 @@ class RecipeItem extends StatelessWidget {
             child: Column(
               children: [
                 Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.blue,
-                image: DecorationImage(
-                  image: NetworkImage(recipe.image),
-                  fit: BoxFit.cover,
-                ),
-              ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.blue,
+                    image: DecorationImage(
+                      image: NetworkImage(recipe.image),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                   height: 125,
                   width: 180,
                 ),
