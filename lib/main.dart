@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'requests/getRecipes.dart';
 import 'entities/Recipe.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  await dotenv.load(fileName: ".env");
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -200,7 +204,7 @@ class RecipeRowHorizontal extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 10),
               child: Text(
                 'New Recipes',
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 20),   
               )),
           Flexible(
             child: ListView.builder(
@@ -354,7 +358,7 @@ class RecipeItem extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
               ),
-              height: 150,
+                  height: 125,
                   width: 180,
                 ),
                 Padding(

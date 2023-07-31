@@ -1,15 +1,15 @@
 class Recipe {
-  final int id;
+  // final int id;
   final String title;
   final String image;
 
-  const Recipe({required this.id, required this.title, required this.image});
+  const Recipe({required this.title, required this.image});
 
   factory Recipe.fromJson(Map<String, dynamic> json) {
     return Recipe(
-      id: json['id'],
-      title: json['title'],
-      image: json['image'],
+      // id: json['recipe']['id'],
+      title: json['recipe']['label'],
+      image: json['recipe']['image'],
     );
   }
 }
