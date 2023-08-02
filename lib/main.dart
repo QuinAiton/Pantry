@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'requests/getRandomRecipes.dart';
-import 'entities/Recipe.dart';
+import '../entities/Recipe.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'dart:math';
+import 'widgets/FeaturedItem.dart';
+import 'widgets/ImageTextButton.dart';
+import 'widgets/RecipeRowList.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -145,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             child: Column(
               children: [
-                const TiledButton(
+                const ImageTextButton(
                     image: 'assets/tomatoes_whitedrop.jpg',
                     text: 'Unlock Premium and tailored recipes',
                     buttonText: 'Join For Free'),
@@ -160,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       return Text('Error: ${snapshot.error}');
                     } else if (snapshot.hasData) {
                       // Wrap the ListView.builder with a Container to give it a size.
-                      return RecipeRowHorizontal(
+                      return RecipeRowList(
                         recipes: [...snapshot.data!],
                       );
                     } else {
@@ -182,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       // Wrap the ListView.builder with a Cont
                       //ainer to give it a size.
                       // var random = Random().nextInt(snapshot.data!.length);
-                      return OneColumnWidget(
+                      return FeaturedItem(
                         title: 'Recipe Of The Day',
                         body: snapshot.data![19].title,
                         image: snapshot.data![19].image,
@@ -204,198 +206,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       bottomNavigationBar: bottomNavigationBarView,
-    );
-  }
-}
-
-class RecipeRowHorizontal extends StatelessWidget {
-  final List<Recipe> recipes;
-  const RecipeRowHorizontal({super.key, required this.recipes});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 220,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: Text(
-                'New Recipes',
-                style: TextStyle(fontSize: 20),
-              )),
-          Flexible(
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: recipes.length,
-              itemBuilder: (context, index) {
-                return RecipeItem(
-                  items: recipes,
-                  title: 'Recipes',
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class TiledButton extends StatelessWidget {
-  final String text;
-  final String image;
-  final String buttonText;
-
-  const TiledButton({
-    required this.image,
-    required this.buttonText,
-    required this.text,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        image: DecorationImage(
-          image: AssetImage(
-              image), // Use AssetImage to create an ImageProvider from the asset
-          fit: BoxFit.cover,
-          colorFilter: const ColorFilter.srgbToLinearGamma(),
-        ),
-      ),
-      height: 150,
-      width: 400,
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text(
-          text.toUpperCase(),
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-          ),
-        ),
-        const SizedBox(height: 10),
-        TextButton(
-            onPressed: null,
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.red[400]),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-              child: Text(
-                buttonText,
-                style: const TextStyle(color: Colors.white),
-              ),
-            ))
-      ]),
-    );
-  }
-}
-
-class OneColumnWidget extends StatelessWidget {
-  final String title;
-  final String image;
-  final String body;
-
-  const OneColumnWidget({
-    required this.image,
-    required this.body,
-    required this.title,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-            padding: EdgeInsets.symmetric(vertical: 10),
-            child: Text(
-              'Recipe Of The Day',
-              style: TextStyle(fontSize: 20),
-            )),
-        Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.white,
-            ),
-            height: 300,
-            width: 400,
-            child: Column(children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20)),
-                  color: Colors.blue,
-                  image: DecorationImage(
-                    image: NetworkImage(image),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                height: 200,
-                width: 400,
-              ),
-              Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Text(
-                    body,
-                  ))
-            ])),
-      ],
-    );
-  }
-}
-
-class RecipeItem extends StatelessWidget {
-  final String title;
-  final List<Recipe> items;
-
-  const RecipeItem({
-    required this.items,
-    required this.title,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: items.map((recipe) {
-        return Padding(
-            padding: EdgeInsets.only(right: 20),
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.blue,
-                    image: DecorationImage(
-                      image: NetworkImage(recipe.image),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  height: 125,
-                  width: 180,
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  child: SizedBox(
-                      width: 1 / 3 * MediaQuery.of(context).size.width,
-                      child: Text(
-                        recipe.title,
-                        textAlign: TextAlign.start,
-                      )),
-                )
-              ],
-            ));
-      }).toList(),
     );
   }
 }
