@@ -186,8 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       // var random = Random().nextInt(snapshot.data!.length);
                       return FeaturedItem(
                         title: 'Recipe Of The Day',
-                        body: snapshot.data![19].title,
-                        image: snapshot.data![19].image,
+                        recipeData: snapshot.data![19],
                       );
                     } else {
                       // If there's no data and no error, show a message that there are no recipes.
