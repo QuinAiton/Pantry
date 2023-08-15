@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'requests/getRandomRecipes.dart';
-import '../entities/Recipe.dart';
+import 'package:pantry/entities/Recipe.dart';
+import 'requests/fetchRecipes.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'widgets/FeaturedItem.dart';
 import 'widgets/ImageTextButton.dart';
 import 'widgets/RecipeRowList.dart';
+import 'requests/fetchRecipeOfTheDay.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -42,11 +43,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
-  late Future<List<Recipe>?> futureRecipe;
+  late Future<List<dynamic>> futureRecipe;
+  late Future<dynamic> futureRecipeOfTheDay;
   @override
   void initState() {
     super.initState();
-    futureRecipe = fetchRandomRecipes();
+    futureRecipe = fetchRecipes();
+    futureRecipeOfTheDay = fetchRecipeOfTheDay();
   }
 
   void _onItemTapped(int index) {
@@ -151,28 +154,24 @@ class _MyHomePageState extends State<MyHomePage> {
                     image: 'assets/tomatoes_whitedrop.jpg',
                     text: 'Unlock Premium and tailored recipes',
                     buttonText: 'Join For Free'),
-                FutureBuilder<List<Recipe>?>(
+                FutureBuilder<List<dynamic>>(
                   future: futureRecipe,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      // While the data is still loading
                       return const CircularProgressIndicator();
                     } else if (snapshot.hasError) {
-                      // If there's an error, display the error message
                       return Text('Error: ${snapshot.error}');
                     } else if (snapshot.hasData) {
-                      // Wrap the ListView.builder with a Container to give it a size.
                       return RecipeRowList(
-                        recipes: [...snapshot.data!],
+                        recipes: snapshot.data!,
                       );
                     } else {
-                      // If there's no data and no error, show a message that there are no recipes.
                       return const Text('No recipes found.');
                     }
                   },
                 ),
-                FutureBuilder<List<Recipe>?>(
-                  future: futureRecipe,
+                FutureBuilder<dynamic>(
+                  future: futureRecipeOfTheDay,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       // While the data is still loading
@@ -186,7 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       // var random = Random().nextInt(snapshot.data!.length);
                       return FeaturedItem(
                         title: 'Recipe Of The Day',
-                        recipeData: snapshot.data![19],
+                        recipeData: snapshot.data,
                       );
                     } else {
                       // If there's no data and no error, show a message that there are no recipes.

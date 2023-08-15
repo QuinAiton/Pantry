@@ -3,7 +3,7 @@ import 'RecipeItems.dart';
 import '../entities/Recipe.dart';
 
 class RecipeRowList extends StatelessWidget {
-  final List<Recipe> recipes;
+  final List<dynamic> recipes;
   const RecipeRowList({Key? key, required this.recipes}) : super(key: key);
 
   @override

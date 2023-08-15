@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pantry/entities/Recipe.dart';
 
 class DetailsPage extends StatelessWidget {
-  final Recipe recipeData;
+  final dynamic recipeData;
 
   const DetailsPage({super.key, required this.recipeData});
 
@@ -11,7 +11,7 @@ class DetailsPage extends StatelessWidget {
     var creamColor = const Color.fromARGB(248, 245, 239, 227);
     return Scaffold(
         appBar: AppBar(
-          title: Text(recipeData.title),
+          title: Text(recipeData?.title ?? ''),
           backgroundColor: creamColor,
           elevation: 0,
         ),
@@ -23,7 +23,7 @@ class DetailsPage extends StatelessWidget {
               Align(
                 alignment: Alignment.center,
                 child: Image(
-                  image: NetworkImage(recipeData.image),
+                  image: NetworkImage(recipeData?.image ?? ''),
                   width: double.infinity,
                   fit: BoxFit.cover,
                   height: 250,
@@ -34,20 +34,20 @@ class DetailsPage extends StatelessWidget {
                 children: [
                   Column(
                     children: [
-                      Text('portions '),
-                      Text(recipeData.servings.toString()),
+                      const Text('portions '),
+                      Text(recipeData?.servings.toString() ?? ''),
                     ],
                   ),
                   Column(
                     children: [
-                      Text('Diet'),
-                      Text(recipeData.cuisineType.toString()),
+                      const Text('Diet'),
+                      Text(recipeData?.cuisineType.toString() ?? ''),
                     ],
                   ),
                   Column(
                     children: [
-                      Text('Prep Time'),
-                      Text(recipeData.totalTime.toString()),
+                      const Text('Prep Time'),
+                      Text(recipeData?.totalTime.toString() ?? ''),
                     ],
                   ),
                 ],
@@ -59,10 +59,10 @@ class DetailsPage extends StatelessWidget {
                     width: 400,
                     color: Colors.grey[350],
                     child: Padding(
-                        padding: EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(20),
                         child: Column(
                           children: [
-                            Text('Ingredients'),
+                            const Text('Ingredients'),
                             for (int index = 0; index < 3; index++)
                               const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 10),
@@ -83,10 +83,10 @@ class DetailsPage extends StatelessWidget {
                     width: 400,
                     color: Colors.green,
                     child: Padding(
-                        padding: EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(20),
                         child: Column(
                           children: [
-                            Text('Instructions'),
+                            const Text('Instructions'),
                             for (int index = 0; index < 3; index++)
                               const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 10),

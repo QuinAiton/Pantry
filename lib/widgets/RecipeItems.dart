@@ -3,7 +3,7 @@ import '../entities/Recipe.dart';
 
 class RecipeItems extends StatelessWidget {
   final String title;
-  final List<Recipe> items;
+  final List<dynamic> items;
 
   const RecipeItems({
     required this.items,
@@ -17,7 +17,7 @@ class RecipeItems extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: items.map((recipe) {
         return Padding(
-            padding: EdgeInsets.only(right: 20),
+            padding: const EdgeInsets.only(right: 20),
             child: Column(
               children: [
                 Container(

@@ -5,17 +5,13 @@ import 'package:pantry/widgets/DetailsPage.dart';
 
 class FeaturedItem extends StatelessWidget {
   final String title;
+  final dynamic recipeData;
 
-
-  final Recipe recipeData;
-
-  FeaturedItem({
-   
+  const FeaturedItem({
     required this.title,
     required this.recipeData,
     Key? key,
   }) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +45,7 @@ class FeaturedItem extends StatelessWidget {
                         topRight: Radius.circular(20)),
                     color: Colors.blue,
                     image: DecorationImage(
-                      image: NetworkImage(recipeData.image),
+                      image: NetworkImage(recipeData?.image ?? ''),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -59,7 +55,7 @@ class FeaturedItem extends StatelessWidget {
                 Container(
                     padding: const EdgeInsets.all(10),
                     child: Text(
-                      recipeData.title,
+                      recipeData?.title ?? '',
                     ))
               ])),
         )
