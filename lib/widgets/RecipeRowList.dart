@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'RecipeItems.dart';
-import '../entities/Recipe.dart';
 
 class RecipeRowList extends StatelessWidget {
   final List<dynamic> recipes;

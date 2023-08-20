@@ -34,7 +34,10 @@ class Recipe {
       title: json['title'],
       image: json['image'],
       ingredients: json['extendedIngredients'],
-      instructions: json['analyzedInstructions']?[0]?['steps'],
+instructions: json['analyzedInstructions'] != null &&
+              json['analyzedInstructions'].isNotEmpty
+          ? json['analyzedInstructions'][0]['steps']
+          : null,
       servings: json['servings'],
       totalTime: json['readyInMinutes'],
       cuisineType: json['cuisines'],
