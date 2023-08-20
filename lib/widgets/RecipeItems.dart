@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pantry/utils/Navigate.dart';
+
+import 'DetailsPage.dart';
 
 class RecipeItems extends StatelessWidget {
   final String title;
@@ -15,34 +18,40 @@ class RecipeItems extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: items.map((recipe) {
-        return Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.blue,
-                    image: DecorationImage(
-                      image: NetworkImage(recipe.image),
-                      fit: BoxFit.cover,
+        return TextButton(
+            onPressed: () => navigator(
+                context,
+                DetailsPage(
+                  recipeData: recipe,
+                )),
+            child: Padding(
+                padding: const EdgeInsets.only(right: 20),
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.blue,
+                        image: DecorationImage(
+                          image: NetworkImage(recipe.image),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      height: 125,
+                      width: 180,
                     ),
-                  ),
-                  height: 125,
-                  width: 180,
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  child: SizedBox(
-                      width: 1 / 3 * MediaQuery.of(context).size.width,
-                      child: Text(
-                        recipe.title,
-                        textAlign: TextAlign.start,
-                      )),
-                )
-              ],
-            ));
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 10),
+                      child: SizedBox(
+                          width: 1 / 3 * MediaQuery.of(context).size.width,
+                          child: Text(
+                            recipe.title,
+                            textAlign: TextAlign.start,
+                          )),
+                    )
+                  ],
+                )));
       }).toList(),
     );
   }
