@@ -12,7 +12,7 @@ class Recipe {
   final bool cheap;
   final bool popular;
   final int healthScore;
-  
+
   const Recipe(
       {required this.id,
       required this.title,
@@ -32,20 +32,21 @@ class Recipe {
     return Recipe(
       id: json['id'],
       title: json['title'],
-      image: json['image'],
-      ingredients: json['extendedIngredients'],
-instructions: json['analyzedInstructions'] != null &&
-              json['analyzedInstructions'].isNotEmpty
+      image: json['image'] ?? '',
+      ingredients: json['extendedIngredients']?.isNotEmpty == true
+          ? json['extendedIngredients']
+          : [],
+      instructions: json['analyzedInstructions']?.isNotEmpty == true
           ? json['analyzedInstructions'][0]['steps']
-          : null,
+          : [],
       servings: json['servings'],
       totalTime: json['readyInMinutes'],
-      cuisineType: json['cuisines'],
-      vegetarian: json['vegetarian'],
-      vegan: json['vegan'],
-      cheap: json['cheap'],
-      popular: json['glutenFree'],
-      healthScore: json['healthScore'],
+      cuisineType: json['cuisines'] ?? [],
+      vegetarian: json['vegetarian'] ?? false,
+      vegan: json['vegan'] ?? false,
+      cheap: json['cheap'] ?? false,
+      popular: json['popular'] ?? false,
+      healthScore: json['healthScore'] ?? 0,
     );
   }
 }

@@ -3,23 +3,25 @@ import 'RecipeItems.dart';
 
 class RecipeRowList extends StatelessWidget {
   final List<dynamic> recipes;
-  const RecipeRowList({Key? key, required this.recipes}) : super(key: key);
+  final String title;
+  const RecipeRowList({Key? key, required this.recipes, required this.title})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 220,
+      height: 255,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 10),
             child: Text(
-              'New Recipes',
+              title,
               style: TextStyle(fontSize: 20),
             ),
           ),
-          Flexible(
+          Expanded(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: 1, // Set itemCount to 1 for the entire list of recipes

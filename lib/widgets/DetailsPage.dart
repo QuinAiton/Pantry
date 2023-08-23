@@ -1,22 +1,33 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings
 
 import 'package:flutter/material.dart';
+import 'package:pantry/requests/fetchSimilarRecipes.dart';
+import 'package:pantry/widgets/RecipeRowList.dart';
 
-class DetailsPage extends StatelessWidget {
+class DetailsPage extends StatefulWidget {
   final dynamic recipeData;
   const DetailsPage({super.key, required this.recipeData});
 
-  
+  @override
+  State<DetailsPage> createState() => _DetailsPageState();
+}
 
+class _DetailsPageState extends State<DetailsPage> {
+  late Future<List<dynamic>> futureSimilarRecipes;
+  @override
+  void initState() {
+    super.initState();
+    futureSimilarRecipes = fetchSimilarRecipes(widget.recipeData.id);
+  }
   @override
   Widget build(BuildContext context) {
     var creamColor = const Color.fromARGB(248, 245, 239, 227);
-    var ingredients = recipeData?.ingredients ?? [];
-    var instructions = recipeData?.instructions ?? [];
+    var ingredients = widget.recipeData?.ingredients ?? [];
+    var instructions = widget.recipeData?.instructions ?? [];
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(recipeData?.title ?? ''),
+          title: Text(widget.recipeData?.title ?? ''),
           backgroundColor: creamColor,
           elevation: 0,
         ),
@@ -30,7 +41,7 @@ class DetailsPage extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Image(
-                    image: NetworkImage(recipeData?.image ?? ''),
+                    image: NetworkImage(widget.recipeData?.image ?? ''),
                     width: double.infinity,
                     fit: BoxFit.cover,
                     height: 250,
@@ -46,21 +57,21 @@ class DetailsPage extends StatelessWidget {
                   Column(
                     children: [
                       const Text('portions '),
-                      Text(recipeData?.servings.toString() ?? 'N/A'),
+                      Text(widget.recipeData?.servings.toString() ?? 'N/A'),
                     ],
                   ),
                   Column(
                     children: [
                       const Text('Diet'),
-                      Text(recipeData?.cuisineType?.isNotEmpty == true
-                          ? recipeData!.cuisineType![0].toString()
+                      Text(widget.recipeData?.cuisineType?.isNotEmpty == true
+                          ? widget.recipeData!.cuisineType![0].toString()
                           : 'N/A')
                     ],
                   ),
                   Column(
                     children: [
                       const Text('Prep Time'),
-                      Text(recipeData?.totalTime.toString() ?? 'N/A'),
+                      Text(widget.recipeData?.totalTime.toString() ?? 'N/A'),
                     ],
                   ),
                 ],
@@ -158,7 +169,24 @@ class DetailsPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ))
+                  )),
+              FutureBuilder<List<dynamic>>(
+                future: futureSimilarRecipes,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else if (snapshot.hasData) {
+                    return RecipeRowList(
+                      title: 'Similar Recipes',
+                      recipes: snapshot.data!,
+                    );
+                  } else {
+                    return const Text('No recipes found.');
+                  }
+                },
+              ),
             ]),
           )
         ]));

@@ -162,6 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       return Text('Error: ${snapshot.error}');
                     } else if (snapshot.hasData) {
                       return RecipeRowList(
+                        title: 'New Recipes',
                         recipes: snapshot.data!,
                       );
                     } else {
