@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'requests/fetchRecipes.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'widgets/FeaturedItem.dart';
-import 'widgets/ImageTextButton.dart';
-import 'widgets/RecipeRowList.dart';
-import 'requests/fetchRecipeOfTheDay.dart';
+import 'package:pantry/requests/fetchRecipes.dart';
+import 'package:pantry/requests/fetchRecipeOfTheDay.dart';
+import 'package:pantry/pages/Pantry.dart';
+import 'package:pantry/pages/Groceries.dart';
+import 'package:pantry/pages/Recipes.dart';
+import 'package:pantry/pages/Home.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -27,19 +28,19 @@ class MyApp extends StatelessWidget {
           foregroundColor: Colors.black,
         ),
       ),
-      home: const MyHomePage(title: 'Pantry'),
+      home: const App(title: 'Pantry'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class App extends StatefulWidget {
+  const App({super.key, required this.title});
   final String title;
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<App> createState() => _AppState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _AppState extends State<App> {
   int _selectedIndex = 0;
 
   late Future<List<dynamic>> futureRecipe;
@@ -53,13 +54,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onItemTapped(int index) {
     setState(() {
+      print(_pages[index]);
       _selectedIndex = index;
     });
   }
 
+  final List<Widget> _pages = [Home(), Recipes(), Pantry(), Groceries()];
+
   @override
   Widget build(BuildContext context) {
-    var listView = ListView(
+    var navDrawerItems = ListView(
       children: [
         const DrawerHeader(
           child: Text(
@@ -139,70 +143,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       drawer: Drawer(
         backgroundColor: creamColor,
-        child: listView,
+        child: navDrawerItems,
       ),
-      body: ListView(
-        scrollDirection: Axis.vertical,
-        children: [
-          Container(
-            color: creamColor,
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Column(
-              children: [
-                const ImageTextButton(
-                    image: 'assets/tomatoes_whitedrop.jpg',
-                    text: 'Unlock Premium and tailored recipes',
-                    buttonText: 'Join For Free'),
-                FutureBuilder<List<dynamic>>(
-                  future: futureRecipe,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else if (snapshot.hasData) {
-                      return RecipeRowList(
-                        title: 'New Recipes',
-                        recipes: snapshot.data!,
-                      );
-                    } else {
-                      return const Text('No recipes found.');
-                    }
-                  },
-                ),
-                FutureBuilder<dynamic>(
-                  future: futureRecipeOfTheDay,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      // While the data is still loading
-                      return const CircularProgressIndicator();
-                    } else if (snapshot.hasError) {
-                      // If there's an error, display the error message
-                      return Text('Error: ${snapshot.error}');
-                    } else if (snapshot.hasData) {
-                      // Wrap the ListView.builder with a Cont
-                      //ainer to give it a size.
-                      // var random = Random().nextInt(snapshot.data!.length);
-                      return FeaturedItem(
-                        title: 'Recipe Of The Day',
-                        recipeData: snapshot.data,
-                      );
-                    } else {
-                      // If there's no data and no error, show a message that there are no recipes.
-                      return const Text('No recipes found.');
-                    }
-                  },
-                ),
-              ]
-                  .map((widget) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: widget,
-                      ))
-                  .toList(),
-            ),
-          ),
-        ],
-      ),
+      body: _pages[_selectedIndex],
       bottomNavigationBar: bottomNavigationBarView,
     );
   }
