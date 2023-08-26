@@ -59,7 +59,7 @@ class _AppState extends State<App> {
     });
   }
 
-  final List<Widget> _pages = [Home(), Recipes(), Pantry(), Groceries()];
+  final List<Widget> _pages = [const Home(), const Recipes(), const Pantry(), const Groceries()];
 
   @override
   Widget build(BuildContext context) {

@@ -25,6 +25,7 @@ class _HomeState extends State<Home> {
     futureRecipeOfTheDay = fetchRecipeOfTheDay();
   }
 
+  @override
   Widget build(BuildContext context) {
     return ListView(
       scrollDirection: Axis.vertical,

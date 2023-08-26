@@ -1,6 +1,5 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:pantry/entities/Recipe.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:pantry/requests/fetchRecipeInformation.dart';
 
