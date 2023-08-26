@@ -73,25 +73,39 @@ class _PantryState extends State<Pantry> {
                     padding: const EdgeInsets.all(3.0),
                     child: Text(
                       item['category'].toString(),
-                      style: TextStyle(fontSize: 20, color: Colors.white),
+                      style: const TextStyle(fontSize: 20, color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
                   ),
                 ), // Display the category
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children:
-                        (item['items'] as List<dynamic>).map<Widget>((item) {
-                      return Text(
-                        item['name'].toString(),
-                        textAlign: TextAlign.start,
-                        style: TextStyle(fontSize: 15),
-                      ); // Display the items under the category
-                    }).toList(),
-                  ),
-                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: (item['items'] as List<dynamic>)
+                      .asMap()
+                      .entries
+                      .map<Widget>((entry) {
+                    final index = entry.key;
+                    final item = entry.value;
+
+                    return Container(
+                      color: index % 2 == 1 ? Colors.green[50] : Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: SizedBox(
+                          width: double
+                              .infinity, // Set the width to double.infinity
+                          child: Text(
+                            item['name'].toString(),
+                            textAlign: TextAlign.start,
+                            style: const TextStyle(
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                )
               ],
             );
           },
